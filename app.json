@@ -1,14 +1,18 @@
 {
   "expo": {
-    "name": "DoneWithIt",
-    "slug": "DoneWithIt",
+    "name": "Cod3a",
+    "slug": "Cod3a",
     "platforms": [
       "ios",
       "android",
       "web"
     ],
     "version": "1.0.0",
-    "orientation": "portrait",
+    "android": {
+      "package": "com.cod3a.peru",
+      "permissions": []
+    },
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
@@ -23,6 +27,7 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "description": "a marketplace for selling the stuff you don't need anymore."
   }
 }
