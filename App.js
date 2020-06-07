@@ -1,47 +1,32 @@
-import React, { useState } from 'react';
-import { FlatList, View, StyleSheet, Alert } from 'react-native';
+import React from 'react';
+import { View, Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-import 'react-native-get-random-values';
-import { v4 as uuidv4 } from 'uuid';
+import HomeScreen2 from './screens/Home';
+import AddScreen from './screens/Add';
+import ModifyScreen from './screens/Modify';
 
-import Header from './components/Header';
-import ListItem from './components/ListItem';
-import AddItem from './components/AddItem';
+import { NoteProvider } from './context/noteContext';
 
-export default function App() {
-  const [items, setItems] = useState([
-    { id: uuidv4(), text: 'potato' },
-    { id: uuidv4(), text: 'orange' },
-    { id: uuidv4(), text: 'apple' },
-    { id: uuidv4(), text: 'banana' },
-    { id: uuidv4(), text: 'tomato' },
-  ]);
-
-  const deleteItem = (id = '') => {
-    setItems((prevItems) => prevItems.filter((item) => item.id !== id));
-  };
-
-  const addItem = (text = '') => {
-    if (!text) {
-      Alert.alert('nothing to add');
-    } else {
-      setItems((prevItems) => [{ id: uuidv4(), text }, ...prevItems]);
-    }
-  };
+function HomeScreen() {
   return (
-    <View style={styles.container}>
-      <Header />
-      <AddItem addItem={addItem} />
-      <FlatList
-        data={items}
-        renderItem={({ item }) => (
-          <ListItem item={item} deleteItem={deleteItem} />
-        )}
-      />
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Home Screen</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-});
+const Stack = createStackNavigator();
+
+export default function App() {
+  return (
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="AddNote" component={AddScreen} />
+          <Stack.Screen name="Modify" component={ModifyScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+  );
+}

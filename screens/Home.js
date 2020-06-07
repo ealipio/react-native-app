@@ -1,63 +1,55 @@
-import React from 'react';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  SafeAreaView,
-  StatusBar,
-  Image,
-  Button,
-  Alert,
-  Platform,
-  TouchableHighlight,
-  TouchableNativeFeedback,
-  View,
-} from 'react-native';
+import React, { useEffect, useState, useContext, useRef } from 'react';
+import { Text, FlatList, TouchableOpacity } from 'react-native';
 
-export default function Home() {
-  console.log('app+executed :)', Platform);
+import { Button } from 'native-base';
+// import { with } from 'react-navigation';
+import { withNavigationFocus } from '@react-navigation/compat';
 
+
+import Layout from '../components/Layout';
+import NoteContent from '../components/NoteContent';
+import NoteContext from '../context/noteContext';
+
+const Home = (props) => {
+  const prevProps = useRef(false);
+  const { getContextNotes } = useContext(NoteContext);
+  const [notes, setNotes] = useState();
+
+  useEffect(() => {
+    const getData = () => {
+      if (prevProps.isFocused !== props.isFocused) {
+        const notesResult = getContextNotes()
+        setNotes(notesResult);
+      }
+    };
+    getData();
+  }, [getContextNotes, props.isFocused]);
   return (
-    <SafeAreaView style={styles.container}>
-      <View
-        style={{
-          backgroundColor: '#00f',
-          width: '50%',
-          height: 70,
-        }}
+    <Layout
+      title="My Notes"
+      footer={
+        <Button full onPress={() => props.navigation.navigate('AddNote')}>
+          <Text>Add Note</Text>
+        </Button>
+      }
+    >
+      <FlatList
+        data={notes}
+        keyExtractor={(note) => note.id}
+        renderItem={(note) => (
+          <TouchableOpacity
+            onPress={() =>
+              props.navigation.navigate('Modify', {
+                id: note.item.id,
+              })
+            }
+          >
+            <NoteContent note={{ ...note }} />
+          </TouchableOpacity>
+        )}
       />
-      <TouchableNativeFeedback>
-        <View style={{ width: 200, height: 2, backgroundColor: '#a19' }} />
-      </TouchableNativeFeedback>
-      <Text style={styles.text}>Cod3a</Text>
-      <TouchableHighlight onPress={() => console.log('on press')}>
-        <Image
-          source={{
-            width: 300,
-            height: 400,
-            uri: 'https://i.picsum.photos/id/971/300/400.jpg',
-          }}
-          blurRadius={0.3}
-          fadeDuration={2000}
-          style={styles.logo}
-        />
-      </TouchableHighlight>
-      <Text style={styles.text}>cod3a.com</Text>
-      <Button title="press me" onPress={() => Alert.alert('Au!')} />
-      <ActivityIndicator size="large" />
-    </SafeAreaView>
+    </Layout>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#333',
-    color: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-  },
-  logo: { width: 250, borderRadius: 10 },
-  text: { color: '#fff', fontWeight: 'bold', fontSize: 18 },
-});
+export default withNavigationFocus(Home);
