@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Card, CardItem, Body, H3, Text } from 'native-base';
 
-const NoteContent = ({ note }) => {
+const NoteCard = ({ note }) => {
   return (
     <Card>
       <CardItem>
@@ -19,4 +19,4 @@ const NoteContent = ({ note }) => {
   );
 };
 
-export default NoteContent;
+export default NoteCard;

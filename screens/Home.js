@@ -2,28 +2,24 @@ import React, { useEffect, useState, useContext, useRef } from 'react';
 import { Text, FlatList, TouchableOpacity } from 'react-native';
 
 import { Button } from 'native-base';
-// import { with } from 'react-navigation';
-import { withNavigationFocus } from '@react-navigation/compat';
-
 
 import Layout from '../components/Layout';
-import NoteContent from '../components/NoteContent';
-import NoteContext from '../context/noteContext';
+import NoteCard from '../components/NoteCard';
+import {NoteContext} from '../context/noteContext';
+
+import useFont from '../hooks/useFont'
 
 const Home = (props) => {
-  const prevProps = useRef(false);
+  //const prevProps = useRef(false);
   const { getContextNotes } = useContext(NoteContext);
-  const [notes, setNotes] = useState();
-
+  const [notes, setNotes] = useState([]);
+  useFont();
   useEffect(() => {
     const getData = () => {
-      if (prevProps.isFocused !== props.isFocused) {
-        const notesResult = getContextNotes()
-        setNotes(notesResult);
-      }
+        setNotes(getContextNotes());
     };
     getData();
-  }, [getContextNotes, props.isFocused]);
+  }, [getContextNotes]);
   return (
     <Layout
       title="My Notes"
@@ -44,7 +40,7 @@ const Home = (props) => {
               })
             }
           >
-            <NoteContent note={{ ...note }} />
+            <NoteCard note={{ ...note }} />
           </TouchableOpacity>
         )}
       />
@@ -52,4 +48,5 @@ const Home = (props) => {
   );
 };
 
-export default withNavigationFocus(Home);
+//export default withNavigationFocus(Home);
+export default Home;

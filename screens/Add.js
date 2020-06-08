@@ -4,7 +4,7 @@ import { Text, StyleSheet } from 'react-native';
 import { Button, Textarea, Form, Item, Input, Label } from 'native-base';
 
 import Layout from '../components/Layout';
-import NoteContext from '../context/noteContext';
+import { NoteContext } from '../context/noteContext';
 
 const styles = StyleSheet.create({
   container: {
@@ -16,11 +16,11 @@ const Add = (props) => {
   const [newNote, setNewNote] = useState({ title: '', content: '', id: '' });
   const { addContextNote } = useContext(NoteContext);
 
-  const saveNote = (newNote) => {
+  const saveNote = (e) => {
     addContextNote(newNote);
     props.navigation.navigate('Home');
   };
-
+  const generateId = () => new Date().getMilliseconds().toString();
   return (
     <Layout
       title="Add Note"
@@ -40,9 +40,9 @@ const Add = (props) => {
           <Label>Title:</Label>
           <Input
             value={newNote.title}
-            onChangeText={(title) =>
-              saveNote({ title, content: newNote.content })
-            }
+            onChangeText={(title) => {
+              setNewNote({ ...newNote, title })
+            }}
           />
         </Item>
         <Textarea
@@ -52,10 +52,9 @@ const Add = (props) => {
             setNewNote({
               title: newNote.title,
               content,
-              id: new Date().getMilliseconds().toString(),
+              id: generateId(),
             })
           }
-          bordered
           placeholder="Here the content of you new note."
         />
       </Form>

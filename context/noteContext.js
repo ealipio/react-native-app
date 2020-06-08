@@ -1,4 +1,4 @@
-import React, { createContext, Component } from 'react';
+import React, { createContext, useState } from 'react';
 
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -11,63 +11,58 @@ export const errorHandler = (e) => {
 
 export const NoteContext = createContext();
 
-export default class NoteProvider extends Component {
-  constructor(props) {
-    super(props);
+const NoteProvider = props => {
+  const [contextNotes, setContextNotes] = useState([]);
 
-    this.getContextNotes = async () => {
-      try {
-        const storedNotes = AsyncStorage.getItem('@notes');
-        if (storedNotes) {
-          this.setState({ contextNotes: [...JSON.parse(storedNotes)] });
-        }
-        return this.state.contextNotes;
-      } catch (e) {
-        errorHandler(e);
-      }
-    };
-    this.addContextNote = (note) => {
-      const { contextNotes } = this.state;
-      contextNotes.push(note);
-      this.setState({ contextNotes }, async () => await this.StoreData());
-    };
-    this.updateContextNote = (note, id) => {
-      const { contextNotes } = this.state;
-      const noteIndex = contextNotes.findIndex((item) => item.id === id);
-      contextNotes[noteIndex].title = note.title;
-      contextNotes[noteIndex].content = note.content;
-      this.setState({ contextNotes }, async () => await this.StoreData());
-    };
-    this.deleteContextNote = (id) => {
-      const { contextNotes: oldNotes } = this.state;
-      const contextNotes = oldNotes.filter((note) => note.id !== id);
-      this.setState({ contextNotes }, async () => await this.StoreData());
-    };
-
-    this.state = {
-      addContextNote: this.addContextNote,
-      getContextNotes: this.getContextNotes,
-      updateContextNote: this.updateContextNote,
-      deleteContextNote: this.deleteContextNote,
-      contextNotes: [],
-    };
-  }
-
-  StoreData = async () => {
+  const getContextNotes = () => {
+    // try {
+    //   const storedNotes = await AsyncStorage.getItem('@notes');
+    //   if(storedNotes) {
+    //     setContextNotes([...JSON.parse(storedNotes)]);
+    //   }
+    //   return contextNotes;
+    // } catch (e) {
+    //   errorHandler(e);
+    // }
+    return contextNotes;
+  };
+  const addContextNote =  (note) => {
+    setContextNotes([...contextNotes, note]);
+    //await storeData();
+  };
+  const updateContextNote =  (note, id) => {
+    const noteIndex = contextNotes.findIndex((item) => item.id === id);
+    // remove
+    const newContextNotes = contextNotes.filter((ctx) => ctx.id !== noteIndex);
+    // add new note
+    setContextNotes([...newContextNotes, note]);
+    // await storeData();
+  };
+  const deleteContextNote = (id) => {
+    setContextNotes(contextNotes.filter((ctx) => ctx.id !== id));
+    // await storeData();
+  };
+  const storeData = async () => {
     try {
-      await AsyncStorage.setItem(
-        '@notes',
-        JSON.stringify([...this.state.contextNotes])
-      );
+      await AsyncStorage.setItem('@notes', JSON.stringify([...contextNotes]));
     } catch (e) {
       errorHandler(e);
     }
   };
-  render() {
-    return (
-      <NoteContext.Provider value={this.state}>
-        {this.props.children}
-      </NoteContext.Provider>
-    );
-  }
-}
+
+  return (
+    <NoteContext.Provider
+      value={{
+        addContextNote,
+        getContextNotes,
+        updateContextNote,
+        deleteContextNote,
+        contextNotes,
+      }}
+    >
+      {props.children}
+    </NoteContext.Provider>
+  );
+};
+
+export default NoteProvider;
