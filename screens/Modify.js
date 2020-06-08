@@ -5,7 +5,6 @@ import { Button, Textarea, Form, Item, Input, Label } from 'native-base';
 
 import Layout from '../components/Layout';
 import { NoteContext } from '../context/noteContext';
-import useFont from '../hooks/useFont';
 
 const styles = StyleSheet.create({
   container: {
@@ -17,8 +16,8 @@ const styles = StyleSheet.create({
 });
 
 const Modify = ({ navigation, route }) => {
-  const [note, setNote] = useState({ title: '', content: '', id: '' });
-  useFont();
+  const initialNote = { title: '', content: '', id: '' };
+  const [note, setNote] = useState(initialNote);
   const { contextNotes, updateContextNote, deleteContextNote } = useContext(
     NoteContext
   );

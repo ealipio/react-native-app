@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -12,23 +12,31 @@ export const errorHandler = (e) => {
 export const NoteContext = createContext();
 
 const NoteProvider = (props) => {
-  const [contextNotes, setContextNotes] = useState([]);
+  const [contextNotes, setContextNotes] = useState();
 
-  const getContextNotes = () => {
-    // try {
-    //   const storedNotes = await AsyncStorage.getItem('@notes');
-    //   if(storedNotes) {
-    //     setContextNotes([...JSON.parse(storedNotes)]);
-    //   }
-    //   return contextNotes;
-    // } catch (e) {
-    //   errorHandler(e);
-    // }
-    return contextNotes;
+  useEffect(() => {
+    const syncData = async () => await storeData();
+    if (contextNotes) {
+      syncData();
+    }
+  }, [contextNotes]);
+
+  const getContextNotes = async () => {
+    try {
+      const storedNotes = await AsyncStorage.getItem('@notes');
+      if (storedNotes) {
+        const storedNotesParsed = [...JSON.parse(storedNotes)];
+        setContextNotes(storedNotesParsed);
+        return storedNotesParsed;
+      }
+      return contextNotes;
+    } catch (e) {
+      errorHandler(e);
+    }
   };
   const addContextNote = async (note) => {
-    setContextNotes([...contextNotes, note]);
-    await storeData();
+    const notes = contextNotes || [];
+    setContextNotes([...notes, note]);
   };
   const updateContextNote = async (note, id) => {
     // remove
@@ -36,11 +44,9 @@ const NoteProvider = (props) => {
     // add new note
     const newNotes = [...newContextNotes, { ...note, id }];
     setContextNotes(newNotes);
-    await storeData();
   };
   const deleteContextNote = async (id) => {
     setContextNotes(contextNotes.filter((ctx) => ctx.id !== id));
-    await storeData();
   };
   const storeData = async () => {
     try {

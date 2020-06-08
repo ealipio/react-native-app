@@ -1,32 +1,47 @@
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+
 import { Text, FlatList, TouchableOpacity } from 'react-native';
 
 import { Button } from 'native-base';
+import { useIsFocused } from '@react-navigation/native';
 
 import Layout from '../components/Layout';
 import NoteCard from '../components/NoteCard';
+
+//import useFont from '../hooks/useFont';
 import { NoteContext } from '../context/noteContext';
 
-import useFont from '../hooks/useFont';
-
-const Home = ({navigation}) => {
-  //const prevProps = useRef(false);
+const Home = ({ navigation }) => {
   const { getContextNotes } = useContext(NoteContext);
   const [notes, setNotes] = useState([]);
-  console.log(notes)
-  useFont();
+  const [loaded, setLoaded] = useState(false);
+  const isFocused = useIsFocused();
+
+  //useFont();
+
   useEffect(() => {
-    const getData = () => {
-      setNotes(getContextNotes());
+    const fetchData = async () => {
+      const notes = await getContextNotes();
+      setNotes(notes);
+      console.log(notes);
     };
-    getData();
-  }, [getContextNotes]);
+
+    if (isFocused && loaded == false) {
+      fetchData();
+      setLoaded(true);
+    }
+
+    if (isFocused === false) {
+      setLoaded(false);
+    }
+  }, [getContextNotes, isFocused]);
+
   return (
     <Layout
       title="My Notes"
       footer={
         <Button full onPress={() => navigation.navigate('AddNote')}>
-          <Text>Add Note</Text>
+          <Text style={{color: '#FFF'}}>Add Note</Text>
         </Button>
       }
     >
