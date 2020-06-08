@@ -11,10 +11,10 @@ export const errorHandler = (e) => {
 
 export const NoteContext = createContext();
 
-const NoteProvider = props => {
+const NoteProvider = (props) => {
   const [contextNotes, setContextNotes] = useState([]);
 
-  const getContextNotes = () => {
+  const getContextNotes = async() => {
     // try {
     //   const storedNotes = await AsyncStorage.getItem('@notes');
     //   if(storedNotes) {
@@ -26,21 +26,21 @@ const NoteProvider = props => {
     // }
     return contextNotes;
   };
-  const addContextNote =  (note) => {
+  const addContextNote = async (note) => {
     setContextNotes([...contextNotes, note]);
-    //await storeData();
+    await storeData();
   };
-  const updateContextNote =  (note, id) => {
-    const noteIndex = contextNotes.findIndex((item) => item.id === id);
+  const updateContextNote = async (note, id) => {
     // remove
-    const newContextNotes = contextNotes.filter((ctx) => ctx.id !== noteIndex);
+    const newContextNotes = contextNotes.filter((note) => note.id !== id);
     // add new note
-    setContextNotes([...newContextNotes, note]);
-    // await storeData();
+    const newNotes = [...newContextNotes, { ...note, id }];
+    setContextNotes(newNotes);
+    await storeData();
   };
-  const deleteContextNote = (id) => {
+  const deleteContextNote = async (id) => {
     setContextNotes(contextNotes.filter((ctx) => ctx.id !== id));
-    // await storeData();
+    await storeData();
   };
   const storeData = async () => {
     try {

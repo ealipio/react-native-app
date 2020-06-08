@@ -5,6 +5,7 @@ import { Button, Textarea, Form, Item, Input, Label } from 'native-base';
 
 import Layout from '../components/Layout';
 import { NoteContext } from '../context/noteContext';
+import useFont from '../hooks/useFont';
 
 const styles = StyleSheet.create({
   container: {
@@ -14,6 +15,7 @@ const styles = StyleSheet.create({
 
 const Add = (props) => {
   const [newNote, setNewNote] = useState({ title: '', content: '', id: '' });
+  useFont();
   const { addContextNote } = useContext(NoteContext);
 
   const saveNote = (e) => {
@@ -41,7 +43,7 @@ const Add = (props) => {
           <Input
             value={newNote.title}
             onChangeText={(title) => {
-              setNewNote({ ...newNote, title })
+              setNewNote({ ...newNote, title });
             }}
           />
         </Item>

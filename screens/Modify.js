@@ -1,26 +1,31 @@
-import React, { Fragment, useState, useContext } from 'react';
+import React, { Fragment, useState, useContext, useEffect } from 'react';
 import { Text, StyleSheet } from 'react-native';
 
 import { Button, Textarea, Form, Item, Input, Label } from 'native-base';
 
 import Layout from '../components/Layout';
-import NoteContext from '../context/noteContext';
+import { NoteContext } from '../context/noteContext';
+import useFont from '../hooks/useFont';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  btn: {
+    color: '#fff',
+  },
 });
 
-const Modify = (props) => {
+const Modify = ({ navigation, route }) => {
   const [note, setNote] = useState({ title: '', content: '', id: '' });
+  useFont();
   const { contextNotes, updateContextNote, deleteContextNote } = useContext(
     NoteContext
   );
 
   useEffect(() => {
     let noteIndex = contextNotes.findIndex(
-      (item) => item.id === props.navigation.state.params.id
+      (item) => item.id === route.params.id
     );
     if (noteIndex > -1) {
       setNote({
@@ -28,30 +33,30 @@ const Modify = (props) => {
         content: contextNotes[noteIndex].content,
       });
     }
-  }, [contextNotes, props.navigation.state.params.id]);
+  }, [contextNotes, route.params.id]);
 
   const updateNote = () => {
-    updateContextNote(note, props.navigation.state.params.id);
-    props.navigation.navigate('Home');
+    updateContextNote(note, route.params.id);
+    navigation.navigate('Home');
   };
 
   const deleteNote = () => {
-    deleteContextNote(props.navigation.state.params.id);
-    props.navigation.navigate('Home');
+    deleteContextNote(route.params.id);
+    navigation.navigate('Home');
   };
   return (
     <Layout
       title="Modify Note"
       footer={
         <Fragment>
-          <Button full onPress={() => props.navigation.navigate('Home')}>
-            <Text>Cancel</Text>
+          <Button full onPress={() => navigation.navigate('Home')}>
+            <Text style={styles.btn}>Cancel</Text>
           </Button>
           <Button full onPress={updateNote}>
-            <Text>Update Note</Text>
+            <Text style={styles.btn}>Update Note</Text>
           </Button>
           <Button full onPress={deleteNote}>
-            <Text>Delete Note</Text>
+            <Text style={styles.btn}>Delete Note</Text>
           </Button>
         </Fragment>
       }
@@ -73,7 +78,6 @@ const Modify = (props) => {
               content,
             })
           }
-          bordered
           placeholder="Here the content of you new note."
         />
       </Form>

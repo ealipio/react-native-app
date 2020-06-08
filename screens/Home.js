@@ -5,18 +5,18 @@ import { Button } from 'native-base';
 
 import Layout from '../components/Layout';
 import NoteCard from '../components/NoteCard';
-import {NoteContext} from '../context/noteContext';
+import { NoteContext } from '../context/noteContext';
 
-import useFont from '../hooks/useFont'
+import useFont from '../hooks/useFont';
 
-const Home = (props) => {
-  //const prevProps = useRef(false);
+const Home = ({navigation}) => {
+  const prevProps = useRef(false);
   const { getContextNotes } = useContext(NoteContext);
   const [notes, setNotes] = useState([]);
   useFont();
   useEffect(() => {
     const getData = () => {
-        setNotes(getContextNotes());
+      setNotes(getContextNotes());
     };
     getData();
   }, [getContextNotes]);
@@ -24,7 +24,7 @@ const Home = (props) => {
     <Layout
       title="My Notes"
       footer={
-        <Button full onPress={() => props.navigation.navigate('AddNote')}>
+        <Button full onPress={() => navigation.navigate('AddNote')}>
           <Text>Add Note</Text>
         </Button>
       }
@@ -34,11 +34,9 @@ const Home = (props) => {
         keyExtractor={(note) => note.id}
         renderItem={(note) => (
           <TouchableOpacity
-            onPress={() =>
-              props.navigation.navigate('Modify', {
-                id: note.item.id,
-              })
-            }
+            onPress={() => {
+              navigation.navigate('Modify', { id: note.item.id });
+            }}
           >
             <NoteCard note={{ ...note }} />
           </TouchableOpacity>
@@ -48,5 +46,4 @@ const Home = (props) => {
   );
 };
 
-//export default withNavigationFocus(Home);
 export default Home;

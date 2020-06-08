@@ -7,11 +7,14 @@ import HomeScreen from './screens/Home';
 import AddScreen from './screens/Add';
 import ModifyScreen from './screens/Modify';
 
+import useFont from './hooks/useFont'
+
 import NoteProvider from './context/noteContext';
 
 const Stack = createStackNavigator();
 
 export default function App() {
+  useFont()
   return (
     <NoteProvider>
       <NavigationContainer>
