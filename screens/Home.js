@@ -10,9 +10,10 @@ import { NoteContext } from '../context/noteContext';
 import useFont from '../hooks/useFont';
 
 const Home = ({navigation}) => {
-  const prevProps = useRef(false);
+  //const prevProps = useRef(false);
   const { getContextNotes } = useContext(NoteContext);
   const [notes, setNotes] = useState([]);
+  console.log(notes)
   useFont();
   useEffect(() => {
     const getData = () => {

@@ -14,7 +14,7 @@ export const NoteContext = createContext();
 const NoteProvider = (props) => {
   const [contextNotes, setContextNotes] = useState([]);
 
-  const getContextNotes = async() => {
+  const getContextNotes = () => {
     // try {
     //   const storedNotes = await AsyncStorage.getItem('@notes');
     //   if(storedNotes) {
